@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>엠에프테크 생산작업계획서</title>
+    <link rel="stylesheet" href="명일작업계획서.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: 20px auto;
+            background: #000;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            color: #fff;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 100px;
+            line-height: 1.2;
+            color: #fff;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 30px;
+            font-weight: bold;
+        }
+        select, input[type="text"], input[type="number"], input[type="date"] {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            font-size: 30px;
+            font-weight: bold;
+            background: #333;
+            color: #fff;
+            border: 1px solid #fff;
+        }
+        .work-entry {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+        }
+        .add-entry {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 30px;
+            font-weight: bold;
+        }
+        .add-entry:hover {
+            background: #0056b3;
+        }
+        button[type="submit"] {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 30px;
+            font-weight: bold;
+        }
+        button[type="submit"]:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>엠에프테크<br>생산작업 계획서</h1>
+        <form id="work-form">
+            <div class="form-group">
+                <label for="date">날짜:</label>
+                <input type="date" id="date" name="date">
+            </div>
+            <div class="form-group">
+                <label for="process">공정:</label>
+                <select id="process" name="process">
+                    <option value="가공">가공</option>
+                    <option value="1차세정">1차세정</option>
+                    <option value="제관">제관</option>
+                    <option value="조립">조립</option>
+                    <option value="출하세정">출하세정</option>
+                    <option value="테스트">테스트</option>
+                    <option value="포장">포장</option>
+                    <option value="용접">용접</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="name">이름:</label>
+                <select id="name" name="name">
+                    <option value="권오현">권오현</option>
+                    <option value="김명자">김명자</option>
+                    <option value="김송">김송</option>
+                    <option value="김용">김용</option>
+                    <option value="복진웅">복진웅</option>
+                    <option value="송창혁">송창혁</option>
+                    <option value="이계우">이계우</option>
+                    <option value="한병근">한병근</option>
+                </select>
+            </div>
+            <div id="work-entries">
+                <div class="work-entry" id="entry-0">
+                    <h3>작업 항목 1</h3>
+                    <div class="form-group">
+                        <label for="work-0">작업내용:</label>
+                        <input type="text" id="work-0" name="work[]" placeholder="작업내용을 입력하세요">
+                    </div>
+                    <div class="form-group">
+                        <label for="quantity-0">작업수량:</label>
+                        <input type="number" id="quantity-0" name="quantity[]" placeholder="작업수량을 입력하세요">
+                    </div>
+                    <div class="form-group">
+                        <label for="time-0">예상작업시간 (분):</label>
+                        <input type="number" id="time-0" name="time[]" placeholder="예상작업시간을 입력하세요">
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="add-entry">작업 추가</button>
+            <button type="submit">제출</button>
+        </form>
+    </div>
+    <script>
+        document.querySelector('.add-entry').addEventListener('click', function() {
+            const workEntries = document.getElementById('work-entries');
+            const newEntryIndex = workEntries.children.length;
+            const newEntry = document.createElement('div');
+            newEntry.className = 'work-entry';
+            newEntry.id = `entry-${newEntryIndex}`;
+            newEntry.innerHTML = `
+                <h3>작업 항목 ${newEntryIndex + 1}</h3>
+                <div class="form-group">
+                    <label for="work-${newEntryIndex}">작업내용:</label>
+                    <input type="text" id="work-${newEntryIndex}" name="work[]" placeholder="작업내용을 입력하세요">
+                </div>
+                <div class="form-group">
+                    <label for="quantity-${newEntryIndex}">작업수량:</label>
+                    <input type="number" id="quantity-${newEntryIndex}" name="quantity[]" placeholder="작업수량을 입력하세요">
+                </div>
+                <div class="form-group">
+                    <label for="time-${newEntryIndex}">예상작업시간 (분):</label>
+                    <input type="number" id="time-${newEntryIndex}" name="time[]" placeholder="예상작업시간을 입력하세요">
+                </div>
+            `;
+            workEntries.appendChild(newEntry);
+        });
+
+        document.getElementById('work-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            // 제출 처리 로직을 여기에 추가
+            alert('작업 계획서가 제출되었습니다.');
+        });
+    </script>
+</body>
+</html>
